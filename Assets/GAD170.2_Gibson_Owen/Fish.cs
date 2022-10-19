@@ -2,10 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Fish : MonoBehaviour
+namespace OwenGibson
 {
-    public void SetInitialState(string newSpecies, float newLength, int newPrice)
+    public class Fish : MonoBehaviour
     {
-        
+        [Header("Fish Details")]
+        [SerializeField] private string species;
+        [SerializeField] private float length;
+        [SerializeField] private float price;
+        public void SetInitialState(string newSpecies, float newLength, float newPrice)
+        {
+            species = newSpecies;
+            length = newLength;
+            price = newPrice;
+        }
     }
 }
