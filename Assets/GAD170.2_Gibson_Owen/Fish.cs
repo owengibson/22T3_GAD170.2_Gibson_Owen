@@ -4,15 +4,15 @@ using UnityEngine;
 
 namespace OwenGibson
 {
-    public enum FishSpecies { Undefined, Barramundi, Cod, Bass, Flathead, Tuna, Carp, Grayling, Piranha, Clownfish, Parrotfish }
+    public enum FishSpecies { Undefined, Barramundi, Cod, Bass, Flathead, Tuna, Salmon, Mackerel, Trout, Sardine, Snapper }
     public class Fish : MonoBehaviour
     {
         [SerializeField] private FishSpecies chosenFishSpecies;
 
         [Header("Fish Details")]
-        [SerializeField] private string species;
-        [SerializeField] private int length; // measured in cm
-        [SerializeField] private float price; // measured in $dollars.cents
+        public string species;
+        public int length; // measured in cm
+        public float price; // measured in $dollars.cents
         private float priceToLengthFactor; // per species factor loosely based on average length, weight, and price per kg
         public void SetFishStats(string newSpecies, int newLength, float newPrice)
         {
@@ -22,6 +22,8 @@ namespace OwenGibson
         }
         public void Initialise()
         {
+            chosenFishSpecies = (FishSpecies)Random.Range(1, 11);
+
             switch (chosenFishSpecies)
             {
                 case FishSpecies.Undefined:
@@ -54,22 +56,38 @@ namespace OwenGibson
 
                 case FishSpecies.Tuna:
                     length = Random.Range(115, 246);
-                    //437.5kg, 150perkg, 180cm
+                    priceToLengthFactor = 364.58f;
+                    SetFishStats("Bluefin Tuna", length, length * priceToLengthFactor);
                     break;
 
-                case FishSpecies.Carp:
+                case FishSpecies.Salmon:
+                    length = Random.Range(70, 81);
+                    priceToLengthFactor = 1.77f;
+                    SetFishStats("Atlantic Salmon", length, length * priceToLengthFactor);
                     break;
 
-                case FishSpecies.Grayling:
+                case FishSpecies.Mackerel:
+                    length = Random.Range(20, 66);
+                    priceToLengthFactor = 0.31f;
+                    SetFishStats("Blue Mackerel", length, length * priceToLengthFactor);
                     break;
 
-                case FishSpecies.Piranha:
+                case FishSpecies.Trout:
+                    length = Random.Range(40, 66);
+                    priceToLengthFactor = 0.57f;
+                    SetFishStats("Rainbow Trout", length, length * priceToLengthFactor);
                     break;
 
-                case FishSpecies.Clownfish:
+                case FishSpecies.Sardine:
+                    length = Random.Range(10, 21);
+                    priceToLengthFactor = 0.05f;
+                    SetFishStats("Australian Sardine", length, length * priceToLengthFactor);
                     break;
 
-                case FishSpecies.Parrotfish:
+                case FishSpecies.Snapper:
+                    length = Random.Range(35, 51);
+                    priceToLengthFactor = 0.94f;
+                    SetFishStats("Snapper", length, length * priceToLengthFactor);
                     break;
 
                 default:
@@ -78,7 +96,7 @@ namespace OwenGibson
             }
         }
 
-        private void Start()
+        private void Awake()
         {
             Initialise();
         }
