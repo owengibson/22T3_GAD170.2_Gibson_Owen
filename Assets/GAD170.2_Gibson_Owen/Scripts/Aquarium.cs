@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
 using System.Linq;
+using Unity.VisualScripting;
 
 namespace OwenGibson
 {
@@ -14,57 +15,29 @@ namespace OwenGibson
         private Fish smallestFish;
         [HideInInspector] public float totalValue;
 
-        [Header("Prefab References")]
         [SerializeField] private GameObject fishPrefab;
-        [SerializeField] private GameObject keepFishPrefab;
-        [SerializeField] private GameObject discardFishPrefab;
-        [SerializeField] private GameObject fishStatsPrefab;
-        [SerializeField] private GameObject aquariumListPrefab;
-        [SerializeField] private GameObject fishEatenPrefab;
-
-        [Space(10)]
-        [Header("Other GameObject References")]
-        [SerializeField] private GameObject canvas;
-        [SerializeField] private GameObject totalValueText;
-
-        [Space(10)]
-        [Header("Miscellaneous Variables")]
+        [SerializeField] private UIManager uiManager;
         [Range(5, 25)]
         public int totalNumOfRounds = 10;
 
         private int numOfRounds = 0;
-        private GameOver gameOverScript;
 
         private GameObject newFishGO;
-        private Fish newFish;
-        private Fish fishEaten;
+        [HideInInspector] public Fish newFish;
+        [HideInInspector] public Fish fishEaten;
         private bool fishEatenInRound = false;
 
-        private void Start()
-        {
-            gameOverScript = GetComponent<GameOver>();
-        }
 
-        //This method runs when the "Find Fish" button is pressed.
+        //This method runs when the "Find Fish" button is pressed. Starts a new turn
         private void FindFishButton()
         {
             newFishGO = Instantiate(fishPrefab);
             newFish = newFishGO.GetComponent<Fish>();
-
-            GameObject _keepFish = Instantiate(keepFishPrefab, canvas.transform, false);
-            _keepFish.GetComponent<Button>().onClick.AddListener(KeepFishButton);
-
-            GameObject _discardFish = Instantiate(discardFishPrefab, canvas.transform, false);
-            _discardFish.GetComponent<Button>().onClick.AddListener(DiscardFishButton);
-
-            GameObject _fishStatsPanel = Instantiate(fishStatsPrefab, canvas.transform, false);
-            _fishStatsPanel.GetComponentInChildren<TextMeshProUGUI>().text = "<b>Species: </b>" + newFish.species +
-                                                                             "<br><b>Length: </b>" + newFish.length +
-                                                                             "cm<br><b>Price: </b>$" + newFish.price.ToString("0.##");
+            uiManager.FindFishUI();
         }
 
         //This method runs when the "Keep Fish" button is pressed
-        private void KeepFishButton()
+        public void KeepFishButton()
         {
             if (fishList.Any()) //checking if aquarium isn't empty
             {
@@ -76,8 +49,7 @@ namespace OwenGibson
 
                     fishEatenInRound = true;
                     fishEaten = smallestFish;
-
-                    Debug.Log("New fish was more than twice the length of your smallest fish. Existing fish got eaten.");
+                    Destroy(smallestFish.GameObject());
 
                 }
                 fishList.Add(newFish);
@@ -95,74 +67,40 @@ namespace OwenGibson
                 totalValue = newFish.price;
                 smallestFish = newFish;
             }
-            totalValueText.GetComponent<TextMeshProUGUI>().text = "<b>Total Aquarium Value: </b>$" + totalValue.ToString("0.##");
-            DestroyNewFishElements();
+            uiManager.UpdateAquariumValue();
+            uiManager.DestroyNewFishUI();
+            newFishGO.GetComponent<SpriteRenderer>().enabled = false;
 
-            if(fishEatenInRound)
+
+            if (fishEatenInRound)
             {
-                GameObject _eatenPanel = Instantiate(fishEatenPrefab, canvas.transform, false);
-                _eatenPanel.transform.Find("EatenOKButton").GetComponent<Button>().onClick.AddListener(DestroyEatenPanel);
-
-                _eatenPanel.transform.Find("Text").GetComponent<TextMeshProUGUI>().text = "Your new fish ate your " + fishEaten.length + "cm long " + fishEaten.species + "!";
-
+                uiManager.FishEatenUI();
                 fishEatenInRound = false;
             }
 
             numOfRounds++;
-            if (numOfRounds == totalNumOfRounds) gameOverScript.GameOverElements();
+            if (numOfRounds == totalNumOfRounds) uiManager.GameOver();
         }
 
-        private void DiscardFishButton()
+        public void DiscardFishButton()
         {
-            DestroyNewFishElements();
+            uiManager.DestroyNewFishUI();
+            newFishGO.GetComponent<SpriteRenderer>().enabled = false;
+
             numOfRounds++;
-            if (numOfRounds == totalNumOfRounds) gameOverScript.GameOverElements();
+            if (numOfRounds == totalNumOfRounds) uiManager.GameOver();
         }
 
-        private void ListAquarium()
-        {
-            GameObject _aquariumListPanel = Instantiate(aquariumListPrefab, canvas.transform, false);
-            TextMeshProUGUI _text = _aquariumListPanel.GetComponentInChildren<TextMeshProUGUI>();
-            _text.text = "";
-            _aquariumListPanel.transform.Find("CloseAquariumButton").GetComponent<Button>().onClick.AddListener(DestroyAquariumListPanel);
-            _aquariumListPanel.transform.Find("ReleaseFishButton").GetComponent<Button>().onClick.AddListener(ReleaseAllFish);
-
-            if(fishList.Any())
-            {
-                foreach (Fish fish in fishList)
-                {
-                    _text.text += fish.species + ", " + fish.length + "cm, $" + fish.price + "<br>";
-                }
-            }
-            else
-            {
-                _text.text = "No fish in aquarium";
-            }
-        }
-        private void ReleaseAllFish()
+        public void ReleaseAllFish()
         {
             fishList.Clear();
-            DestroyAquariumListPanel();
+
+            GameObject[] allFish = GameObject.FindGameObjectsWithTag("Fish");
+            foreach (GameObject fish in allFish) Destroy(fish);
+
+            uiManager.DestroyAquariumListUI();
             totalValue = 0;
-            totalValueText.GetComponent<TextMeshProUGUI>().text = "<b>Total Aquarium Value: </b>$" + totalValue;
-        }
-
-        private void DestroyNewFishElements()
-        {
-            newFishGO.GetComponent<SpriteRenderer>().enabled = false;
-            Destroy(GameObject.FindGameObjectWithTag("KeepFishButton"));
-            Destroy(GameObject.FindGameObjectWithTag("DiscardFishButton"));
-            Destroy(GameObject.FindGameObjectWithTag("FishStatsPanel"));
-        }
-
-        private void DestroyAquariumListPanel()
-        {
-            Destroy(GameObject.FindGameObjectWithTag("AquariumListPanel"));
-        }
-
-        private void DestroyEatenPanel()
-        {
-            Destroy(GameObject.FindGameObjectWithTag("EatenPanel"));
+            uiManager.UpdateAquariumValue();
         }
     }
 }

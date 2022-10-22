@@ -9,6 +9,8 @@ TagManager:
   - FishStatsPanel
   - AquariumListPanel
   - EatenPanel
+  - HomeScreen
+  - Fish
   layers:
   - Default
   - TransparentFX
