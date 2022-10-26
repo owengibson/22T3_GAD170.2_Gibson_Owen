@@ -33,7 +33,9 @@ namespace OwenGibson
             slider = transform.Find("HomeScreen").transform.Find("NumberOfRounds").GetComponent<Slider>();
             textSliderValue = transform.Find("HomeScreen").transform.Find("NumberOfRounds").transform.Find("Value").GetComponent<TextMeshProUGUI>();
 
-            ShowSliderValue();
+            ShowSliderValue()
+
+            //transform.GetComponentInChildren<Slider>() 
         }
 
 
