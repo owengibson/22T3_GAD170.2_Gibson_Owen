@@ -24,15 +24,12 @@ namespace OwenGibson
         [SerializeField] private GameObject canvas; // not using gameObject in case script is moved.
         [SerializeField] private Aquarium aquarium;
         [SerializeField] private TextMeshProUGUI totalValueText;
-
-        private Slider slider;
-        private TextMeshProUGUI textSliderValue;
+        [SerializeField] private TextMeshProUGUI lastActionText;
+        [SerializeField] private Slider slider;
+        [SerializeField] private TextMeshProUGUI textSliderValue;
 
         private void Start()
         {
-            slider = transform.Find("HomeScreen").transform.Find("NumberOfRounds").GetComponent<Slider>();
-            textSliderValue = transform.Find("HomeScreen").transform.Find("NumberOfRounds").transform.Find("Value").GetComponent<TextMeshProUGUI>();
-
             ShowSliderValue();
         }
 
@@ -82,13 +79,13 @@ namespace OwenGibson
             }
         }
 
-        public void GameOver() // Spawns all UI elements for the game over screen. 1 panel, 1 button, 3 text fields.
+        public void GameOver(float totalValue) // Spawns all UI elements for the game over screen. 1 panel, 1 button, 3 text fields.
         {
             GameObject _gameOverPanel = Instantiate(gameOverPanelPrefab, canvas.transform, false);
             _gameOverPanel.transform.Find("PlayAgainButton").GetComponent<Button>().onClick.AddListener(PlayAgain);
 
             TextMeshProUGUI totalValueText = _gameOverPanel.transform.Find("Final Value").GetComponent<TextMeshProUGUI>();
-            totalValueText.text = "$" + aquarium.totalValue.ToString("0.##");
+            totalValueText.text = "$" + totalValue.ToString("0.##");
         }
 
         //---------------- Destructive methods ---------------//
@@ -123,13 +120,19 @@ namespace OwenGibson
             textSliderValue.text = slider.value.ToString();
         }
 
-        public void UpdateAquariumValue() // Updates UI text for aquarium value.
+        public void UpdateAquariumValue(float totalValue) // Updates UI text for aquarium value.
         {
-            totalValueText.text = "<b>Total Aquarium Value: </b>$" + aquarium.totalValue.ToString("0.##");
+            totalValueText.text = "<b>Total Aquarium Value: </b>$" + totalValue.ToString("0.##");
         }
+
+        public void UpdateLastActionText(string lastAction) // Updates UI text depicting what the last action taken was.
+        {
+            lastActionText.text = lastAction;
+        }
+
         private void PlayAgain() // Restarts game.
         {
-            SceneManager.LoadScene("FishingGame");
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
     }
 }

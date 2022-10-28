@@ -13,7 +13,7 @@ namespace OwenGibson
     {
         public List<Fish> fishList = new List<Fish>();
         private Fish smallestFish;
-        [HideInInspector] public float totalValue;
+        private float totalValue;
 
         [SerializeField] private GameObject fishPrefab;
         [SerializeField] private UIManager uiManager;
@@ -26,6 +26,8 @@ namespace OwenGibson
         [HideInInspector] public Fish newFish;
         [HideInInspector] public Fish fishEaten;
         private bool fishEatenInRound = false;
+
+        private string lastAction;
 
 
         //This method runs when the "Find Fish" button is pressed. Starts a new turn
@@ -67,30 +69,40 @@ namespace OwenGibson
                 totalValue = newFish.price;
                 smallestFish = newFish;
             }
-            uiManager.UpdateAquariumValue();
+            uiManager.UpdateAquariumValue(totalValue);
             uiManager.DestroyNewFishUI();
             newFishGO.GetComponent<SpriteRenderer>().enabled = false;
 
+            lastAction = "You kept a " + newFish.length + "cm long " + newFish.species + "!";
+            uiManager.UpdateLastActionText(lastAction);
 
             if (fishEatenInRound)
             {
                 uiManager.FishEatenUI();
                 fishEatenInRound = false;
+
+                lastAction = "You kept a " + newFish.length + "cm long " + newFish.species + " which ate your " + fishEaten.length + "cm long " + fishEaten.species + "!";
+                uiManager.UpdateLastActionText(lastAction);
             }
 
             numOfRounds++;
-            if (numOfRounds == totalNumOfRounds) uiManager.GameOver();
+            if (numOfRounds == totalNumOfRounds) uiManager.GameOver(totalValue);
         }
 
+        // This method is run when the "Discard Fish" button gets pressed
         public void DiscardFishButton()
         {
             uiManager.DestroyNewFishUI();
             newFishGO.GetComponent<SpriteRenderer>().enabled = false;
 
+            lastAction = "You discarded a " + newFish.length + "cm long " + newFish.species + "!";
+            uiManager.UpdateLastActionText(lastAction);
+
             numOfRounds++;
-            if (numOfRounds == totalNumOfRounds) uiManager.GameOver();
+            if (numOfRounds == totalNumOfRounds) uiManager.GameOver(totalValue);
         }
 
+        // This methods runs when the "Release All Fish" button gets pressed
         public void ReleaseAllFish()
         {
             fishList.Clear();
@@ -100,7 +112,10 @@ namespace OwenGibson
 
             uiManager.DestroyAquariumListUI();
             totalValue = 0;
-            uiManager.UpdateAquariumValue();
+            uiManager.UpdateAquariumValue(totalValue);
+
+            lastAction = "You released all of your fish!";
+            uiManager.UpdateLastActionText(lastAction);
         }
     }
 }
