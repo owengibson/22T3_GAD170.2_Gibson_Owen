@@ -47,7 +47,7 @@ namespace OwenGibson
             GameObject _fishStatsPanel = Instantiate(fishStatsPrefab, canvas.transform, false);
             _fishStatsPanel.GetComponentInChildren<TextMeshProUGUI>().text = "<b>Species: </b>" + aquarium.newFish.species +
                                                                              "<br><b>Length: </b>" + aquarium.newFish.length +
-                                                                             "cm<br><b>Price: </b>$" + aquarium.newFish.price.ToString("0.##");
+                                                                             "cm<br><b>Price: </b>$" + aquarium.newFish.price.ToString("0.00");
         }
 
         public void FishEatenUI() // Spawns all UI elements for when a fish is eaten. Panel with text.
@@ -122,7 +122,7 @@ namespace OwenGibson
 
         public void UpdateAquariumValue(float totalValue) // Updates UI text for aquarium value.
         {
-            totalValueText.text = "<b>Total Aquarium Value: </b>$" + totalValue.ToString("0.##");
+            totalValueText.text = "<b>Total Aquarium Value: </b>$" + totalValue.ToString("0.00");
         }
 
         public void UpdateLastActionText(string lastAction) // Updates UI text depicting what the last action taken was.

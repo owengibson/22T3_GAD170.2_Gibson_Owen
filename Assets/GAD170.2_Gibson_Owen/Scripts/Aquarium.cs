@@ -33,7 +33,7 @@ namespace OwenGibson
         //This method runs when the "Find Fish" button is pressed. Starts a new turn
         private void FindFishButton()
         {
-            newFishGO = Instantiate(fishPrefab);
+            newFishGO = Instantiate(fishPrefab, transform);
             newFish = newFishGO.GetComponent<Fish>();
             uiManager.FindFishUI();
         }
@@ -93,7 +93,7 @@ namespace OwenGibson
         public void DiscardFishButton()
         {
             uiManager.DestroyNewFishUI();
-            newFishGO.GetComponent<SpriteRenderer>().enabled = false;
+            Destroy(newFishGO);
 
             lastAction = "You discarded a " + newFish.length + "cm long " + newFish.species + "!";
             uiManager.UpdateLastActionText(lastAction);
