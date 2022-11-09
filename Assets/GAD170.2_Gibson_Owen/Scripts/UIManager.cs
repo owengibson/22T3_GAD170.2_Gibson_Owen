@@ -58,7 +58,7 @@ namespace OwenGibson
             _eatenPanel.transform.Find("Text").GetComponent<TextMeshProUGUI>().text = "Your new fish ate your " + aquarium.fishEaten.length + "cm long " + aquarium.fishEaten.species + "!";
         }
 
-        public void ListAquarium() // Spawns all UI elements to list the current fish in the aquarium. 1 panel, 2 buttons, and a text field.
+        public void ListAquarium() // Spawns all UI elements to list the current fish in the aquarium. 1 panel, 2 buttons, and a text field. Called on "List Aquarium" button press.
         {
             GameObject _aquariumListPanel = Instantiate(aquariumListPrefab, canvas.transform, false);
             TextMeshProUGUI _text = _aquariumListPanel.GetComponentInChildren<TextMeshProUGUI>();

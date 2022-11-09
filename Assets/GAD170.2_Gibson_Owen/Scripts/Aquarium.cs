@@ -1,9 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using TMPro;
 using System.Linq;
 using Unity.VisualScripting;
 
@@ -36,6 +32,8 @@ namespace OwenGibson
             newFishGO = Instantiate(fishPrefab, transform);
             newFish = newFishGO.GetComponent<Fish>();
             uiManager.FindFishUI();
+
+            Debug.Log("Fish found");
         }
 
         //This method runs when the "Keep Fish" button is pressed
@@ -52,10 +50,12 @@ namespace OwenGibson
                     fishEatenInRound = true;
                     fishEaten = smallestFish;
                     Destroy(smallestFish.GameObject());
+                    Debug.Log("Fish eaten");
 
                 }
                 fishList.Add(newFish);
                 totalValue += newFish.price;
+                Debug.Log("Added fish");
 
                 smallestFish = null;
                 foreach (Fish fish in fishList) // find new smallest fish
@@ -68,6 +68,7 @@ namespace OwenGibson
                 fishList.Add(newFish);
                 totalValue = newFish.price;
                 smallestFish = newFish;
+                Debug.Log("Added first fish");
             }
             uiManager.UpdateAquariumValue(totalValue);
             uiManager.DestroyNewFishUI();
@@ -94,6 +95,7 @@ namespace OwenGibson
         {
             uiManager.DestroyNewFishUI();
             Destroy(newFishGO);
+            Debug.Log("Fish discarded");
 
             lastAction = "You discarded a " + newFish.length + "cm long " + newFish.species + "!";
             uiManager.UpdateLastActionText(lastAction);
